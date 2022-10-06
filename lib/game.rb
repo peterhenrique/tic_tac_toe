@@ -2,7 +2,7 @@
 require 'pry-byebug'
 
 class Player
-  attr_accessor :name, :symbol, :score
+  attr_accessor :name, :symbol, :score, :print_name
 
   def initialize(name, symbol)
     @name = name
@@ -10,19 +10,16 @@ class Player
     @score = 0
   end
 
-  def name(name); end
-
-  def symbol(_symbol)
-    @symbol
+  def print_name
+    puts self.name.to_s
   end
 end
 
-
 class Game
   WALLS = ' - + - + -'
-  attr_accessor :board_positions, :winning_board, :winning, :valid
+  attr_accessor :board_positions, :winning_board, :winning, :valid, :jogador_1, :jogador_2
 
-  def initialize(board_positions = [1, 2, 3, 4, 5, 6, 7, 8, 9], data = [])
+  def initialize(board_positions = [1, 2, 3, 4, 5, 6, 7, 8, 9])
     @board_positions = board_positions
     @valid = []
     @winning_board = [
@@ -36,16 +33,17 @@ class Game
       [6, 7, 8]
     ]
     @winning = false
-    #@jogador_1 = create_routine
-    #@jogador_2 = create_routine
 
+    @jogador_1 = create_routine
+    @jogador_2 = create_routine
 
+    play_round until game_over
+  end
 
-    #p @name1
-    #p @name2
-    #p @symbol1
-    #p @symbol2
-    #game_start
+  def game_over
+    return true if @valid.size == 9
+    return true if @winning == true
+    false
   end
 
   def create_routine
@@ -75,32 +73,12 @@ class Game
     puts " #{@board_positions[3]} | #{@board_positions[4]} | #{@board_positions[5]}"
     puts WALLS
     puts " #{@board_positions[6]} | #{@board_positions[7]} | #{@board_positions[8]}"
-  end
+  end  
 
-  def game_start
-    @player1_turn = true
+  def declare_winner(simbol)
+    return puts "#{@jogador_1.name} wins!" if simbol == @jogador_1.symbol
 
-    show_board
-    i = 0
-
-    until i == 9 || @winning != false
-      player_turn
-
-      show_board
-      if win_condition(@board_positions) == true
-
-      end
-      i += 1
-
-    end
-  end
-
-  def declare_winner
-      #if array[1] == @symbol1
-       # puts "#{@name1} wins!"
-      #else
-       # puts "#{@name2} wins!"
-      #end
+    puts "#{@jogador_1.name} wins!"    
   end
 
   def checker(array)
@@ -113,24 +91,20 @@ class Game
 
 
   def win_condition(array)    
-
-    ## each fazer
-    ## ela tem que checar se alguma das combinações estão presentes
-
     i = 0
     until i == @winning_board.length
       check1 = @winning_board[i][0]
       check2 = @winning_board[i][1]
       check3 = @winning_board[i][2]
       test_checker([array[check1], array[check2], array[check3]])
-
+      break if winning == true
       i += 1
 
     end
   end
 
   def start_new
-    p 'Do you want to start a new game? (Y/N)'
+    puts 'Do you want to start a new game? (Y/N)'
     if gets.chomp.downcase == 'y'
       @answer = true
       jogo_ = Game.new
@@ -164,15 +138,22 @@ class Game
   end
 
   def player_turn(simbol)
+    return declare_winner(simbol) if game_over == true
+
     move = get_move
-    insert_simbol
+    insert_simbol(simbol, move)
+    declare_winner(simbol) if game_over == true
   end
 
-
-
-  
+  def play_round
+    show_board
+    player_turn(@jogador_1.symbol)
+    win_condition(@board_positions)
+    show_board
+    player_turn(@jogador_2.symbol)
+    win_condition(@board_positions) 
+  end  
 end
 
 jogo = Game.new
 
-jogo.get_move

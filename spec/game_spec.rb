@@ -2,6 +2,9 @@ require_relative '../lib/game'
 
 describe Game do
     subject(:new_game) { described_class.new }
+    
+
+
 
     describe '#winning_condition' do
     let(:winning_condition) {instance_double(win_condition)}
@@ -90,6 +93,7 @@ describe Game do
 
     describe 'get_move' do
         context 'valid move' do
+            
         end
     end
 
@@ -103,6 +107,36 @@ describe Game do
             it 'changes the vacancy to a player simbol' do
                 inserir = subject.insert_simbol(simbol, position)
                 expect(board[6]).to eq(simbol)
+            end
+        end
+    end
+
+
+    describe '#game_over' do
+        context 'winning == true' do
+            it 'returns true' do
+                subject.winning = true
+                expect(new_game.game_over).to be_truthy
+            end
+        end 
+    end
+
+    describe '#declare_winner' do
+        before do
+            let(:winning) {instance_variable_get(@winning)}
+            let(:move) {instance_double(get_move)}
+
+        end
+        context 'jogador 1 wins' do
+            
+            xit 'returns jogador_1 name' do
+                winning = true
+                move = 5
+                name1 = 'pedro'
+                subject.jogador_1 = Player.new(name1, 'x')
+                subject.jogador_2 = Player.new('dudu', 'o')
+
+                expect(subject.declare_winner('x')).to receive(:puts)
             end
         end
     end
